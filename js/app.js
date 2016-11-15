@@ -3,7 +3,7 @@
 	//创建模块
 	angular.module('myApp', [])
 		//注册控制器
-		.controller('myController', ['$scope', function($scope){
+		.controller('myController', ['$scope','$location', function($scope,$location){
 			//初始化
 			//给文本框添加一个模型
 			$scope.text = '';
@@ -72,7 +72,25 @@
 					$scope.data[i].completed = now;
 				}
 				now = !now;
+			};
+			//状态筛选
+			$scope.selector = {};
+			//让$scope也有一个指向$location的数据成员
+			$scope.$location = $location;
+			//注意: watch只能监视属于$scope的成员
+			$scope.$watch('$location.path()',function(now , old) {
+				switch(now) {
+				case '/active':
+					$scope.selector = {completed:false};
+					break;
+				case '/completed':
+					$scope.selector = {completed:true};
+					break;
+				default:
+					$scope.selector = {};
+					break;
 			}
+			});
 		}]);
 
 })(angular);
